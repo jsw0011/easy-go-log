@@ -1,4 +1,4 @@
-module easy-init-go-log
+module github.com/jsw0011/easy-init-go-log
 
 go 1.16
 
