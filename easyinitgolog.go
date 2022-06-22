@@ -1,9 +1,12 @@
 package easyinitgolog
 
 import (
-	logging "github.com/op/go-logging"
 	"os"
+
+	logging "github.com/op/go-logging"
 )
+
+var loggers = make(map[string]*logging.Logger)
 
 /**
  * logger can be retrieved by calling go-logging/GetLogger
@@ -33,8 +36,8 @@ func InitLogger(logPath *string, level *string, moduleName string) *logging.Logg
 
 	// https://github.com/op/go-logging/blob/master/examples/example.go
 	logger := logging.MustGetLogger(moduleName)
-	backend1 := logging.NewLogBackend(logFile, "", 0)
-	backend2 := logging.NewLogBackend(logFile, "", 0) // for logging error messages as pure text
+	backend1 := logging.NewLogBackend(logFile, moduleName, 0)
+	backend2 := logging.NewLogBackend(logFile, moduleName, 0) // for logging error messages as pure text
 
 	format := logging.MustStringFormatter(
 		`%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`,
@@ -56,7 +59,17 @@ func InitLogger(logPath *string, level *string, moduleName string) *logging.Logg
 	backend1Leveled.SetLevel(logging.ERROR, "") // level ERROR for error messages
 
 	logging.SetLevel(defLevel, moduleName)
-	logger.SetBackend(logging.SetBackend(backend1Leveled, backend2Formatter))
+	logger.SetBackend(logging.MultiLogger(backend1Leveled, backend2Formatter))
+
+	loggers[moduleName] = logger
 
 	return logger
+}
+
+func GetLoggerByName(name string) *logging.Logger {
+	logger, exists := loggers[name]
+	if exists {
+		return logger
+	}
+	return nil
 }
