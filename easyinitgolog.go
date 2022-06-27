@@ -40,11 +40,11 @@ func InitLogger(logPath *string, level *string, moduleName string) *logging.Logg
 	backend2 := logging.NewLogBackend(logFile, moduleName, 0) // for logging error messages as pure text
 
 	format := logging.MustStringFormatter(
-		`%{color}%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`,
+		` %{color}%{time:15:04:05.000} %{shortfunc}() ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`,
 	)
 
 	formatFile := logging.MustStringFormatter(
-		`%{time:15:04:05.000} %{shortfunc} ▶ %{level:.4s} %{id:03x} %{message}`,
+		` %{time:15:04:05.000} %{shortfunc}() ▶ %{level:.4s} %{id:03x} %{message}`,
 	)
 
 	var backend2Formatter logging.Backend
